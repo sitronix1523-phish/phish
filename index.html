@@ -260,7 +260,24 @@
       font-size: 13px;
       color: var(--muted);
     }
-
+    .phish-figure {
+      margin: 16px auto;
+      max-width: 720px;        /* 你想要的圖片最大寬度，可調整 */
+    }
+    
+    .phish-figure img {
+      width: 100%;             /* 填滿 figure 寬度 */
+      height: auto;            /* 保持比例不變形 */
+      display: block;          /* 消除底部空隙 */
+      border-radius: 8px;      /* 可選：讓圖片圓角好看 */
+    }
+    
+    .phish-figure figcaption {
+      margin-top: 8px;
+      font-size: 14px;
+      color: #666;
+      text-align: center;
+    }
     /* Footer */
     .footer{
       margin-top: 16px;
@@ -355,10 +372,16 @@
               <li>不下載未知附件</li>
             </ul>
             
+
           <figure class="phish-figure">
-            <img src="https://raw.githubusercontent.com/sitronix1523-phish/phish/main/%E5%AE%A3%E5%B0%8E%E5%9C%96%E7%89%87.png"
-                 alt="社交工程結與假按鈕的常見特徵</figcaption>
+            <img
+              src="https://raw.githubusercontent.com/sitronix1523-phish/phish/main/%E5%AE%A3%E5%B0%8E%E5%9C%96%E7%89%87.png"
+              alt="社交工程與假按鈕的常見特徵"
+              loading="lazy"
+            />
+            <figcaption>社交工程與假按鈕的常見特徵</figcaption>
           </figure>
+
 
           </div>
         </div>
@@ -447,3 +470,4 @@
 </body>
 
 </html>
+

@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>【矽創集團】115年度電子郵件社交工程演練</title>
+  <style>
+    :root{
+      --bg: #0b1220;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.09);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.72);
+      --line: rgba(255,255,255,.12);
+      --accent: #22c55e;     /* green */
+      --warn: #f59e0b;       /* amber */
+      --danger: #ef4444;     /* red */
+      --info: #38bdf8;       /* sky */
+      --purple: #a78bfa;
+      --yellow: #fcff2f;     /* yellow */
+      --shadow: 0 12px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", Arial, sans-serif;
+    }
+    *{ box-sizing: border-box; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 600px at 15% -10%, rgba(56,189,248,.22), transparent 55%),
+        radial-gradient(900px 500px at 95% 10%, rgba(167,139,250,.18), transparent 60%),
+        radial-gradient(900px 500px at 60% 120%, rgba(34,197,94,.12), transparent 60%),
+        linear-gradient(180deg, #070b14, #0b1220 28%, #0b1220);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+    a{ color: var(--info); text-decoration: none; transition: color .2s; }
+    a:hover{ color: #fff; text-decoration: underline; }
+
+    .wrap{
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 32px 20px 64px;
+    }
+
+    /* Header */
+    .hero{
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 28px 28px 24px;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(56,189,248,.18), rgba(167,139,250,.14), rgba(34,197,94,.12));
+      box-shadow: var(--shadow);
+    }
+    .hero::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:
+        radial-gradient(600px 160px at 20% 10%, rgba(255,255,255,.20), transparent 60%),
+        radial-gradient(400px 140px at 80% 40%, rgba(255,255,255,.12), transparent 60%);
+      pointer-events:none;
+    }
+    .badge-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      position:relative;
+      z-index:1;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.25);
+      font-size: 13px;
+      color: rgba(255,255,255,.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      letter-spacing: 0.5px;
+    }
+    .dot{
+      width:10px; height:10px;
+      border-radius:50%;
+      background: var(--accent);
+      box-shadow: 0 0 18px rgba(34,197,94,.8);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(34,197,94, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(34,197,94, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(34,197,94, 0); }
+    }
+    .title{
+      margin: 18px 0 10px;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing:.5px;
+      position:relative;
+      z-index:1;
+      background: linear-gradient(120deg, #fff, #b9eaff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .subtitle{
+      margin: 0;
+      color: var(--muted);
+      position:relative;
+      z-index:1;
+      font-size: 15px;
+      border-left: 3px solid var(--line);
+      padding-left: 14px;
+    }
+    .subtitle b { color: #fff; font-weight: 600; }
+
+    /* Content cards */
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+      margin-top: 20px;
+    }
+    .card{
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.03);
+      box-shadow: 0 8px 22px rgba(0,0,0,.18);
+      overflow:hidden;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .card:hover {
+      border-color: rgba(255,255,255,.2);
+      transform: translateY(-2px);
+    }
+    .card .hd{
+      display:flex;
+      align-items:center;
+      gap:16px;
+      padding: 16px 20px;
+      background: rgba(255,255,255,.05);
+      border-bottom: 1px solid var(--line);
+    }
+    .icon{
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      display:grid;
+      place-items:center;
+      font-weight: 700;
+      font-size: 18px;
+      font-family: var(--mono);
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.2);
+    }
+    .card .bd{
+      padding: 18px 20px 22px;
+      color: var(--text);
+      font-size: 15px;
+    }
+    .meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px 16px;
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .kv{
+      display:flex; gap:10px;
+      align-items:flex-start;
+      padding:10px 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.03);
+      border: 1px dashed rgba(255,255,255,.14);
+      flex: 1 1 300px;
+    }
+    .kv b{ color: #fff; white-space:nowrap; font-weight: 600;}
+    
+    /* Lists */
+    .bd ul, .bd ol { margin: 10px 0 0 20px; padding: 0; }
+    .bd li { margin: 8px 0; }
+
+    /* Highlight callouts */
+    .callout{
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.15);
+      font-size: 14px;
+    }
+    .callout b { font-weight: 700; margin-right: 4px; }
+    
+    .callout.warn{
+      border-color: rgba(245,158,11,.3);
+      background: linear-gradient(180deg, rgba(245,158,11,.08), rgba(0,0,0,.15));
+      color: #ffedca;
+    }
+    .callout.warn b { color: var(--warn); }
+
+    .callout.info{
+      border-color: rgba(56,189,248,.3);
+      background: linear-gradient(180deg, rgba(56,189,248,.08), rgba(0,0,0,.15));
+      color: #e0f7ff;
+    }
+    .callout.info b { color: var(--info); }
+
+    .callout.good{
+      border-color: rgba(34,197,94,.3);
+      background: linear-gradient(180deg, rgba(34,197,94,.08), rgba(0,0,0,.15));
+      color: #e4ffe9;
+    }
+    .callout.good b { color: var(--accent); }
+
+    .callout.danger{
+      border-color: rgba(239,68,68,.35);
+      background: linear-gradient(180deg, rgba(239,68,68,.08), rgba(0,0,0,.15));
+      color: #ffdad9;
+    }
+    .callout.danger b { color: var(--danger); }
+
+    /* Three steps */
+    .steps{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 14px;
+    }
+    .step{
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      padding: 14px 14px 18px;
+      min-height: 140px;
+      position:relative;
+      overflow:hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .step::after{
+      content:"";
+      position:absolute;
+      inset:auto -60px -60px auto;
+      width:160px; height:160px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,.08), transparent 65%);
+      transform: rotate(20deg);
+      pointer-events:none;
+    }
+    .step h4{
+      margin: 0 0 10px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-size: 17px;
+      font-weight: 700;
+    }
+    .step h4 .text { color: #fff; }
+    
+    .pill{
+      display:inline-flex;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-family: var(--mono);
+      font-weight: 400;
+      border: 1px solid rgba(255,255,255,.14);
+      color: var(--muted);
+      background: rgba(0,0,0,.2);
+      letter-spacing: 0.5px;
+    }
+
+    .step .desc {
+      font-size: 14px;
+      color: var(--text);
+      flex-grow: 1;
+    }
+
+    /* Figures & Images */
+    .phish-figure {
+      margin: 18px auto 0;
+      max-width: 100%;
+    }
+    
+    .phish-figure img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      box-shadow: 0 5px 15px rgba(0,0,0,.3);
+    }
+    
+    .phish-figure figcaption {
+      margin-top: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      color: rgba(255,255,255,.9);
+      text-align: center;
+      letter-spacing: .5px;
+    }
+
+    /* Training Section */
+    .training-intro {
+      margin-bottom: 16px;
+      font-size: 15px;
+      color: var(--muted);
+    }
+    .training-intro b { color: #fff; }
+
+    .phish-figure--wide img {
+      margin-bottom: 14px; /* 圖片之間的間距 */
+    }
+    .phish-figure--wide img:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Footer */
+    .footer{
+      margin-top: 20px;
+      padding: 16px 20px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.15);
+      color: var(--muted);
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      font-size: 14px;
+    }
+    .sig{
+      color: rgba(255,255,255,.9);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    /* Responsive */
+    @media (max-width: 800px){
+      .steps{ grid-template-columns: 1fr; }
+      .kv { flex: 1 1 100%; }
+    }
+    @media (max-width: 600px){
+      .wrap { padding: 16px 12px 40px; }
+      .hero { padding: 20px; }
+      .title{ font-size: 22px; }
+      .card .hd { padding: 14px 16px; gap: 12px;}
+      .icon { width: 34px; height: 34px; font-size: 16px; }
+      .card .bd { padding: 16px; font-size: 14px; }
+      .badge-row { justify-content: center; gap: 8px; }
+      .subtitle { font-size: 14px; padding-left: 10px; }
+    }
+
+    /* Print */
+    @media print{
+      body{ background:#fff; color:#111; font-size: 12pt; }
+      .wrap { max-width: 100%; padding: 0; }
+      .hero,.card,.footer{ box-shadow:none; border: 1px solid #ccc; background:#fff; margin-bottom: 15pt; page-break-inside: avoid;}
+      .hero{ background:#f0f0f0; background: linear-gradient(135deg, #e0e0e0, #f0f0f0); color: #000; }
+      .title { background: none; -webkit-text-fill-color: #000; color: #000; font-size: 20pt;}
+      .subtitle { color: #333; border-left-color: #ccc; }
+      .subtitle b { color: #000; }
+      .badge { border: 1px solid #ccc; background: #fff; color: #333; backdrop-filter: none;}
+      .dot { box-shadow: none; animation: none; border: 1px solid #333;}
+      .card .hd { background: #f5f5f5; border-bottom: 1px solid #ccc; }
+      .icon { background: #fff; border: 1px solid #ccc; color: #000; }
+      .kv { background: #fff; border: 1px dashed #ccc; }
+      .kv b { color: #000; }
+      .callout { border: 1px solid #ccc; background: #fff; color: #000; }
+      .callout b { color: #000 !important; }
+      .step { background: #fff; border: 1px solid #ccc; color: #000; }
+      .pill { border: 1px solid #ccc; background: #fff; color: #000; }
+      figcaption { color: #000; }
+      a{ color:#000; text-decoration: underline; }
+      .footer { background: #f5f5f5; color: #333; }
+      .sig { color: #000; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div class="badge-row">
+        <div class="badge"><span class="dot"></span> 內部重要公告 / Security Advisory</div>
+        <div class="badge">更新日期：2026年4月1日</div>
+      </div>
+      <h1 class="title">【矽創集團】115年度電子郵件社交工程演練</h1>
+      <p class="subtitle">
+        受文者：<b>全體同仁</b> ｜ 主旨：為強化全員資安警覺性並符合法令規範，公司將定期辦理社交工程演練，敬請配合。
+      </p>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <div class="hd">
+          <div class="icon" style="color:var(--info)">01</div>
+          <div>
+            <div style="font-weight:700; color:#fff;">演練目的與必要性</div>
+            <div style="font-size:13px; color:var(--muted);">提升辨識釣魚郵件能力，強化企業數位韌性</div>
+          </div>
+        </div>
+        <div class="bd">
+          <p style="margin:0 0 10px;">
+            依據金管會<b>「上市上櫃公司資通安全管控指引」</b>規定，企業須每年定期辦理電子郵件社交工程演練。
+          </p>
+          <p style="margin:0;">
+            統計顯示，全球超過 90% 的駭客攻擊源自社交工程手法的詐騙郵件。為保護公司核心客戶資料、研發專利及同仁個人資訊安全，提升實戰中的辨識與應變能力至關重要。
+          </p>
+          <div class="callout info">
+            <b>核心目標：</b>演練旨在讓同仁在面對「真實攻擊」時，能形成直覺式的警覺，有效降低點擊連結、下載附件及資訊外洩的風險。
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <div class="icon" style="color:var(--purple)">02</div>
+          <div>
+            <div style="font-weight:700; color:#fff;">演練執行方式</div>
+            <div style="font-size:13px; color:var(--muted);">全年度不定期、多波次、貼近真實情境模擬</div>
+          </div>
+        </div>
+        <div class="bd">
+          <div class="meta">
+            <div class="kv"><b>執行期間</b><span>本年度將不定期進行多次模擬測試，事前不另行通知。</span></div>
+            <div class="kv"><b>演練形式</b><span>系統將發送模擬惡意郵件（主題涵蓋：人事通知、系統帳號異動、福利資訊、時事議題等）。</span></div>
+          </div>
+          <div class="callout warn">
+            <b>評核重點（三不原則）：</b>
+            <ul>
+              <li><strong>不</strong>開啟來源不明或可疑信件</li>
+              <li><strong>不</strong>點擊郵件內的可疑連結</li>
+              <li><strong>不</strong>下載/執行未經確認的附件</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <div class="icon" style="color:var(--accent)">03</div>
+          <div>
+            <div style="font-weight:700; color:#fff;">若不慎點擊的後續處理</div>
+            <div style="font-size:13px; color:var(--muted);">演練旨在學習與防禦，非懲處究責</div>
+          </div>
+        </div>
+        <div class="bd">
+          <p style="margin:0;">
+            演練的真諦在於「建立防禦意識」而非「究責懲處」。
+            若您在演練中不慎點擊連結或下載附件，系統將引導您至「簡易資安宣導網頁」。請務必閱讀該網頁內容，加強辨識技巧。這些資源將幫助您在未來遇到「真實攻擊」時，做出正確判斷。
+          </p>
+          <div class="callout good">
+            <b>安心提醒：</b>每一次的點擊提醒都是寶貴的防禦練習。掌握核心辨識技巧，是阻斷真實駭客攻擊、守護企業資產最有效的方法。
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <div class="icon" style="color:var(--danger)">04</div>
+          <div>
+            <div style="font-weight:700; color:#fff;">資安實戰守則：看、思、報</div>
+            <div style="font-size:13px; color:var(--muted);">簡單三步驟，阻斷社交工程攻擊鏈</div>
+          </div>
+        </div>
+        <div class="bd">
+          <div class="steps">
+            <div class="step">
+              <h4>
+                <span class="dot" style="background:var(--danger); box-shadow: 0 0 10px rgba(239,68,68,.5);"></span>
+                <span class="text">1. 看 (Check)</span>
+                <span class="pill">寄件者</span>
+              </h4>
+              <div class="desc">
+                仔細查看寄件者「電子郵件地址」是否異常，勿僅信任顯示名稱。
+              </div>
+              <div class="callout danger" style="margin-top:10px; font-family:var(--mono); word-break:break-all;">
+                可疑：<span style="color:#fff;">admin@<b>microsoft-safe.com</b></span><br/>
+                正常：<span style="color:#fff;">admin@<b>microsoft.com</b></span> (注意網域)
+              </div>
+            </div>
+            <div class="step">
+              <h4>
+                <span class="dot" style="background:var(--warn); box-shadow: 0 0 10px rgba(245,158,11,.5);"></span>
+                <span class="text">2. 思 (Think)</span>
+                <span class="pill">內容與附件</span>
+              </h4>
+              <div class="desc">
+                郵件是否製造急迫感、誘騙輸入密碼、OTP 或下載檔案？
+              </div>
+              <ul class="small" style="margin-top:8px; font-size:13px; color:var(--muted);">
+                <li>關鍵字：「限時」、「立即」、「帳號將停用」</li>
+                <li>附件為可執行檔 (.exe, .scr) 或含巨集文件</li>
+              </ul>
+            </div>
+            <div class="step">
+              <h4>
+                <span class="dot" style="background:var(--info); box-shadow: 0 0 10px rgba(56,189,248,.5);"></span>
+                <span class="text">3. 報 (Report)</span>
+                <span class="pill">立即行動</span>
+              </h4>
+              <div class="desc">
+                發現可疑郵件，**不刪除、不轉寄**，立即依 SOP 向資訊單位回報。
+              </div>
+              <div class="callout info" style="margin-top:10px;">
+                建議： 發現可疑信件時，請務必採用「轉寄為附件」方式通報資安單位，以保留完整的郵件標頭資訊供後續分析。
+              </div>
+            </div>
+          </div>
+          
+          <div id="sop" class="callout warn">
+            <b>可疑郵件處理 SOP：</b>
+            <ol style="margin:8px 0 0 18px; font-size:13px;">
+              <li><strong>保持冷靜：</strong>不要點擊任何連結、不要開啟任何附件。</li>
+              <li><strong>保留現場：</strong>將該郵件「轉寄作為附件」給資安部門，以便分析郵件標頭（不直接轉寄郵件）。</li>
+              <li><strong>緊急處置（若已點擊）：</strong>立即關閉開啟的網頁。若已輸入帳密，請立刻變更密碼並通知資安部門。</li>
+              <li><strong>隔離檔案（若已下載）：</strong>請勿執行，並隔離檔案，等待資安部門協助掃描與處理。</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <div class="icon" style="color:var(--yellow)">05</div>
+          <div>
+            <div style="font-weight:700; color:#fff;">資安微訓練：常見攻擊主旨</div>
+            <div style="font-size:13px; color:var(--muted);">多一分防備，少一分數位風險</div>
+          </div>
+        </div>
+        <div class="bd">
+          <div class="training">
+            <p class="training-intro">
+              駭客常利用人性弱點（好奇、恐懼、貪婪）製作郵件主旨。以下為近期<b>針對企業攻擊</b>的熱門主旨類別，請同仁務必提高警覺：
+            </p>
+            
+            <figure class="phish-figure phish-figure--wide">
+              <img src="https://raw.githubusercontent.com/sitronix1523-phish/phish/main/%E8%B3%87%E5%AE%89%E6%95%99%E8%88%87%E8%A8%93%E7%B7%B4-1.png" loading="lazy" alt="資安教訓練-常見主旨類型 1" />
+              <img src="https://raw.githubusercontent.com/sitronix1523-phish/phish/main/%E8%B3%87%E5%AE%89%E6%95%99%E8%88%87%E8%A8%93%E7%B7%B4-4.png" loading="lazy" alt="資安教訓練-常見主旨類型 2" />
+              
+              <img src="https://raw.githubusercontent.com/sitronix1523-phish/phish/main/%E8%B3%87%E5%AE%89%E6%95%99%E8%88%87%E8%A8%93%E7%B7%B4-5.png" loading="lazy" alt="資安教訓練-常見主旨類型 4" />
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <div class="icon" style="color:var(--yellow)">圖</div>
+          <div>
+            <div style="font-weight:700; color:#fff;">此次社交工程郵件與假按鈕特徵解析</div>
+          </div>
+        </div>
+        <div class="bd">
+          <figure class="phish-figure">
+            <img
+              src="https://raw.githubusercontent.com/sitronix1523-phish/phish/main/%E5%AE%A3%E5%B0%8E%E5%9C%96%E7%89%87-2.png"
+              alt="釣魚郵件常見特徵範例"
+              loading="lazy"
+            />
+          </figure>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div>公告單位：<span class="sig">[數位策略發展處 - 資訊安全]</span> 敬啟</div>
+      <div style="font-size:12px;">© 2026 Company Security Awareness. Internal Use Only.</div>
+    </footer>
+  </div>
+</body>
+</html>
